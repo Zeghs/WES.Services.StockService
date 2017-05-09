@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\build" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="設定檔1" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="Web.config" publishTime="07/04/2015 21:28:21" />
-    <file relUrl="bin/StockService.dll" publishTime="07/04/2015 21:28:12" />
-    <file relUrl="bin/StockService.pdb" publishTime="07/04/2015 21:28:12" />
     <file relUrl="Zeghs/Services/GetSeriesSymbolData.ashx" publishTime="05/30/2014 22:09:46" />
+    <file relUrl="Zeghs/Services/apiGetSeriesSymbolData.ashx" publishTime="04/27/2017 00:23:47" />
+    <file relUrl="bin/StockService.dll" publishTime="04/27/2017 14:18:08" />
+    <file relUrl="bin/StockService.pdb" publishTime="04/27/2017 14:18:08" />
+    <file relUrl="Web.config" publishTime="04/27/2017 14:18:15" />
   </publishProfile>
 </publishData>

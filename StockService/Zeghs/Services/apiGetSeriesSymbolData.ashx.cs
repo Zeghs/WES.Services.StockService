@@ -6,9 +6,9 @@ using Zeghs.Utils;
 
 namespace Zeghs.Services {
 	/// <summary>
-	///   取得商品開高低收資訊(舊版請求格式)
+	///   取得商品開高低收資訊(新版請求格式)
 	/// </summary>
-	public class GetSeriesSymbolData : IHttpHandler {
+	public class apiGetSeriesSymbolData : IHttpHandler {
 		private const int DATA_BLOCK_SIZE = 48;
 		private const int DAY_TIMEFRAME_FORMAT = 86400;
 
@@ -22,68 +22,49 @@ namespace Zeghs.Services {
 
 			HttpRequest cRequest = context.Request;
 
-			string sExchange = cRequest.Form["exchange"];
-			string sSymbolId = cRequest.Form["symbolId"];
-			int iTimeFrame = int.Parse(cRequest.Form["timeFrame"]);
-			long lPosition = long.Parse(cRequest.Form["position"]);
-			DateTime cStartDate = DateTime.Parse(cRequest.Form["startDate"]);
-			DateTime cEndDate = DateTime.Parse(cRequest.Form["endDate"]);
-			int iCount = int.Parse(cRequest.Form["count"]);
-
-			/*
-			string sExchange = "TWSE";
-			string sSymbolId = "TXF0.tw";
-			int iTimeFrame = 86400;
-			long lPosition = -1;
-			int iCount = 0;
-			DateTime cStartDate = DateTime.Parse("2015-2-21");
-			DateTime cEndDate = DateTime.Parse("2015-6-1");
-			// */
+			string sExchange = cRequest.Form["exchange"];  //交易所簡稱
+			string sSymbolId = cRequest.Form["symbolId"];  //商品代號
+			int iTimeFrame = int.Parse(cRequest.Form["timeFrame"]);  //時間週期(60=1分, 300=5分)
+			long lPosition = long.Parse(cRequest.Form["position"]);  //客戶端目前歷史資料的檔案位置
+			DateTime cStartDate = DateTime.Parse(cRequest.Form["startDate"]);  //資料起始時間
+			DateTime cEndDate = DateTime.Parse(cRequest.Form["endDate"]);  //資料結束時間
+			int iCount = int.Parse(cRequest.Form["count"]);  //資料請求個數
 
 			string sTimeFrameFormat = (iTimeFrame < DAY_TIMEFRAME_FORMAT) ? "mins" : "days";
 			string sFilename = context.Server.MapPath(string.Format("~/data/{0}/{1}/{2}", sExchange, sTimeFrameFormat, sSymbolId));
 			if (File.Exists(sFilename)) {
 				using (FileStream cStream = new FileStream(sFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 					try {
-						long lIndex = 0;
+						long lStartPosition = 0, lEndPosition = lPosition * DATA_BLOCK_SIZE;
 						int iBlockCount = (int) (cStream.Length / DATA_BLOCK_SIZE);
 						iCount = ((iCount < iBlockCount) ? iCount : iBlockCount);
-						if (lPosition == -1) {
-							long lStartPosition = 0, lEndPosition = 0;
-							if (iCount == 0) {
+						if (iCount == 0) {
+							if (lPosition == -1) {
 								FileSearchUtil.BinaryNearSearch(cStream, iBlockCount, DATA_BLOCK_SIZE, cEndDate.AddSeconds(86400));
 								lEndPosition = cStream.Position;
-								
-								FileSearchUtil.BinaryNearSearch(cStream, iBlockCount, DATA_BLOCK_SIZE, cStartDate);
-								lStartPosition = cStream.Position;
+							}
 
-								iCount = (int) ((lEndPosition - lStartPosition) / DATA_BLOCK_SIZE);
-							} else {
+							FileSearchUtil.BinaryNearSearch(cStream, iBlockCount, DATA_BLOCK_SIZE, cStartDate);
+							lStartPosition = cStream.Position;
+
+							iCount = (int) ((lEndPosition - lStartPosition) / DATA_BLOCK_SIZE);
+						} else {
+							if (lPosition == -1) {
 								FileSearchUtil.BinaryNearSearch(cStream, iBlockCount, DATA_BLOCK_SIZE, cEndDate.AddSeconds(86400));
 								lEndPosition = cStream.Position;
-								lStartPosition = lEndPosition - iCount * DATA_BLOCK_SIZE;
-								lStartPosition = (lStartPosition < 0) ? 0 : lStartPosition;
-								
-								iCount = (int) ((lEndPosition - lStartPosition) / DATA_BLOCK_SIZE);
 							}
-							
-							lIndex = lStartPosition;
-							lPosition = iBlockCount - iCount;
-						} else {
-							long lLocation = lPosition - iCount;
-							lIndex = lLocation * DATA_BLOCK_SIZE;
-							if (lIndex < 0) {
-								iCount = (int) lPosition;
-								lIndex = lPosition = 0;
-							} else {
-								lPosition = lLocation;
-							}
+
+							lStartPosition = lEndPosition - iCount * DATA_BLOCK_SIZE;
+							lStartPosition = (lStartPosition < 0) ? 0 : lStartPosition;
+
+							iCount = (int) ((lEndPosition - lStartPosition) / DATA_BLOCK_SIZE);
 						}
+						lPosition = lStartPosition / DATA_BLOCK_SIZE;
 
 						int iSize = iCount * DATA_BLOCK_SIZE;
 						byte[] bData = new byte[iSize];
 
-						cStream.Position = lIndex;
+						cStream.Position = lStartPosition;
 						iSize = cStream.Read(bData, 0, iSize);
 						int iBeginDate = BitConverter.ToInt32(bData, 0);  //起始日期
 						int iEndDate = BitConverter.ToInt32(bData, iSize - DATA_BLOCK_SIZE);  //終止日期
@@ -94,7 +75,7 @@ namespace Zeghs.Services {
 						cResponse.Cookies.Add(new HttpCookie("dataSize", iSize.ToString()));
 						cResponse.Cookies.Add(new HttpCookie("beginDate", iBeginDate.ToString()));
 						cResponse.Cookies.Add(new HttpCookie("endDate", iEndDate.ToString()));
-						
+
 						Stream cOutput = cResponse.OutputStream;
 						cOutput.Write(bData, 0, iSize);
 						cOutput.Flush();

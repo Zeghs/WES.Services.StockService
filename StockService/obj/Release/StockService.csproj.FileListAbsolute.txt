@@ -1,0 +1,10 @@
+D:\project\WES.Services.StockService\StockService\bin\StockService.dll
+D:\project\WES.Services.StockService\StockService\bin\StockService.pdb
+D:\project\WES.Services.StockService\StockService\obj\Release\ResolveAssemblyReference.cache
+D:\project\WES.Services.StockService\StockService\obj\Release\StockService.dll
+D:\project\WES.Services.StockService\StockService\obj\Release\StockService.pdb
+D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\bin\StockService.dll
+D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\bin\StockService.pdb
+D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\obj\Release\ResolveAssemblyReference.cache
+D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\obj\Release\StockService.dll
+D:\project\ZeroSystem_Project\WES.Services.StockService\StockService\obj\Release\StockService.pdb
