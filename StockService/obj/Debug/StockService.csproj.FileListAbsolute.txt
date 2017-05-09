@@ -1,5 +1,0 @@
-D:\project\WES.Services.StockService\StockService\bin\StockService.dll
-D:\project\WES.Services.StockService\StockService\bin\StockService.pdb
-D:\project\WES.Services.StockService\StockService\obj\Debug\ResolveAssemblyReference.cache
-D:\project\WES.Services.StockService\StockService\obj\Debug\StockService.dll
-D:\project\WES.Services.StockService\StockService\obj\Debug\StockService.pdb
